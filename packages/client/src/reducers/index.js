@@ -1,8 +1,12 @@
 import {combineReducers} from 'redux';
-import {counterReducer} from './counterReducer';
+import {
+    counterReducerWithDatabase,
+    counterReducerWithoutDatabase
+} from './counterReducer';
 
 const rootReducer = combineReducers({
-    counter: counterReducer
+    counter: counterReducerWithDatabase
+    // counter: counterReducerWithoutDatabase
 });
 
 export default rootReducer;

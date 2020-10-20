@@ -4,9 +4,8 @@ module.exports.create = async (req, res, next) => {
     const {body} = req;
     try {
         const createdCount = await Count.create(body);
-        const countData = createdCount.get();
         res.status(201).send({
-            data: countData,
+            data: body,
         });
     } catch (err) {
         res.status(400).send({
