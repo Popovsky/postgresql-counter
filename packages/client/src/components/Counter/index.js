@@ -16,7 +16,7 @@ const Counter = (props) => {
         getState,
         value,
         step,
-        isFetching
+        isFetching,
     } = props;
     const inc = useCallback(
         () => {
@@ -31,17 +31,17 @@ const Counter = (props) => {
         [value, step]
     );
     const set = useCallback(
-        (event) => {
-            setStep(event);
+        ({target: {value: stepValue}}) => {
+            setStep({value, step: Number(stepValue)});
         },
-        [step]
+        [value, step]
     );
     useEffect(() => {
         getState();
-    }, []);
+    }, [getState]);
     return (
         <div>
-            <h1>{isFetching ? 'Loading...' : value}</h1>
+            <h1>{isFetching ? '...' : value}</h1>
             <button onClick={dec}>-</button>
             <button onClick={inc}>+</button>
             <input type="number" value={step} onChange={set}/>

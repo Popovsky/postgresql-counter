@@ -1,42 +1,15 @@
 import {put} from 'redux-saga/effects';
 import * as API from './../api';
 import * as counterActionCreators from './../actions/counterActionCreators';
-import store from '../store';
 
-export function* incrementCounterValueSaga(action) {
-    const {payload: {value}} = action;
-    yield put(counterActionCreators.incrementRequest());
+export function* setCounterStateSaga(action) {
+    const {payload: {value, step}, type} = action;
+    yield put(counterActionCreators.setCounterStateRequest());
     try {
-        yield put(counterActionCreators.incrementMiddleware({value}));
-        const newCounterValue = store.getState().counter.value;
-        yield API.createNextCounterState({value: newCounterValue});
-        yield put(counterActionCreators.incrementRequestSuccess());
+        const {data: {data}} = yield API.createNextCounterState({type, value, step});
+        yield put(counterActionCreators.setCounterStateRequestSuccess(data));
     } catch (err) {
-        yield put(counterActionCreators.incrementRequestError(err));
-    }
-}
-
-export function* decrementCounterValueSaga(action) {
-    const {payload: {value}} = action;
-    yield put(counterActionCreators.decrementRequest());
-    try {
-        yield put(counterActionCreators.decrementMiddleware({value}));
-        const newCounterValue = store.getState().counter.value;
-        yield API.createNextCounterState({value: newCounterValue});
-        yield put(counterActionCreators.decrementRequestSuccess());
-    } catch (err) {
-        yield put(counterActionCreators.decrementRequestError(err));
-    }
-}
-
-export function* setCounterStepSaga(action) {
-    const {payload: {stepValue: step}} = action;
-    yield put(counterActionCreators.setStepRequest());
-    try {
-        const {data: {data}} = yield API.createNextCounterState({step});
-        yield put(counterActionCreators.setStepRequestSuccess(data));
-    } catch (err) {
-        yield put(counterActionCreators.setStepRequestError(err));
+        yield put(counterActionCreators.setCounterStateRequestError(err));
     }
 }
 

@@ -1,11 +1,32 @@
 const {Count} = require('./../models');
+const {increment, decrement} = require('./../services');
 
 module.exports.create = async (req, res, next) => {
-    const {body} = req;
+    const {body: {type, value, step}} = req;
+    let newCounterState;
+    switch (type) {
+        case 'INCREMENT': {
+            newCounterState = increment({value, step});
+            break;
+        }
+        case 'DECREMENT': {
+            newCounterState = decrement({value, step});
+            break;
+        }
+        default:
+            newCounterState = {value, step};
+            break;
+    }
     try {
-        const createdCount = await Count.create(body);
+        const maxCountId = await Count.max('id');
+        if (maxCountId > 10) {
+            const minCountId = await Count.min('id');
+            const count = await Count.findByPk(minCountId);
+            await count.destroy();
+        }
+        const createdCount = await Count.create(newCounterState);
         res.status(201).send({
-            data: body,
+            data: createdCount,
         });
     } catch (err) {
         res.status(400).send({
